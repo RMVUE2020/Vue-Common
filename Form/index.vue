@@ -1,5 +1,6 @@
 <template>
     <el-form ref="form" :model="formData" :label-width="labelWidth" :label-position="labelPosition">
+        
         <template v-for="item in formItme" >
             <template v-if="!formItemHide[item.prop]">
                 <el-form-item v-if="!item.inlineFormItem" :key="item.prop" :label="item.label" :prop="item.prop" :rules="item.rules" :class="{noLabel: item.noLabel}">
