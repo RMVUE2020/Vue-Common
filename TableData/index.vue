@@ -64,7 +64,7 @@
 <script>
 // 组件
 import SearchForm from "../FormSearch";
-import { GetTableData, Delete } from "@/api/common";
+import { GetTableData, Delete, Export } from "@/api/common";
 export default {
     name: "TableComponent",
     components: { SearchForm },
@@ -107,6 +107,7 @@ export default {
         // 组件回调
         callbackComponent(params){
             this[params.function] && this[params.function](params.data);
+
         },
         // 搜索
         search(data){
@@ -120,6 +121,17 @@ export default {
                 }
             }
             this.requestData(data)
+        },
+        // 导出
+        exportFile(data){
+            let requestData = {
+                url: this.table_config.url + 'ExportFile',
+                data: Object.assign(data, this.table_config.data),
+            }
+            Export(requestData).then(response => {
+                const file = response.data;
+                file && this.gFileDown(file);
+            })
         },
         /** table config */
         initConfig(){

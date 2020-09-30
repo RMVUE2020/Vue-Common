@@ -24,6 +24,9 @@
                     <el-button v-if="item.element === 'link'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="item.handler && item.handler()">
                         <router-link :to="item.link">{{ item.label }}</router-link>
                     </el-button>
+                    <el-button v-if="item.element === 'export'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="handerlExport">
+                        {{ item.label }}
+                    </el-button>
                 </template>
             </template>
         </el-form-item>
@@ -119,6 +122,26 @@ export default {
             const date = this.form_data[item.prop];
             this.form_data[item.felid_start] = date ? date[0] : "";
             this.form_data[item.felid_end] = date ? date[1] : "";
+        },
+        /** 导出 */
+        handerlExport(){
+            // 拷贝数据
+            const data = JSON.parse(JSON.stringify(this.form_data));
+            // 用户ID
+            if(this.$refs.username) { 
+                data.user_id = this.handlerUsername();
+            }
+            // 搜索数据过滤
+            const searchData = {}
+            for(let key in data) {
+                if(data[key]) {
+                    searchData[key] = data[key]
+                }
+            }
+            this.$emit("callbackComponent", {
+                function: "exportFile",
+                data: searchData
+            })
         }
     },
     
