@@ -111,8 +111,8 @@ export default {
         /**
          * 对象数据处理
          */
-        handlerUsername(val){
-            const data = this.tableData.filter(item => item.username == val);
+        handlerUsername(){
+            const data = this.tableData.filter(item => item.username == this.form_data.user_id);
             return (data.length > 0) ? data[0].user_id : this.form_data.user_id;
         },
         handlerData(item){
