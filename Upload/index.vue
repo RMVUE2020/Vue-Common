@@ -90,6 +90,7 @@ export default {
     position: relative;
     overflow: hidden;
     width: 150px;
+    max-width: 100%;
     height: 150px;
     line-height: 150px;
     font-size: 20px;
