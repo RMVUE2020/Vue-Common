@@ -3,6 +3,7 @@
       class="avatar-uploader"
       list-type="picture-card"
       action="fakeaction"
+      :show-file-list="fileList"
       :http-request="uploadSectionFile"
       :on-remove="handleRemove">
       <img v-if="imgUrl" :src="imgUrl" alt="" width="100%" height="100%">
@@ -16,21 +17,31 @@ export default {
   name: 'Upload',
   components: {},
   props: {
-    listType: {
+    fileList: {
+      type: Boolean,
+      default: false
+    },
+    initImg: {
       type: String,
       default: ""
     }
   },
+  watch: {
+    initImg: {
+      handler(newValue){
+        newValue && (this.imgUrl = newValue)
+      }
+    },
+  },
   data() {
     return {
         dialogImageUrl: '',
+        imgUrl: ""
     };
   },
-  watch: {},
   computed: {},
   methods: {
     uploadSectionFile(params) {
-      
       const file = params.file,
         fileType = file.type,
         isImage = fileType.indexOf("image") != -1,
@@ -50,10 +61,11 @@ export default {
       form.append("file", file);
       // 本例子主要要在请求时添加特定属性，所以要用自己方法覆盖默认的action
       form.append("clientType", 'xxx');
-      console.log(form)
       // 项目封装的请求方法，下面做简单介绍
       UploadFile(form).then(response => {
-         console.log(response)
+         const data = response.data;
+         this.imgUrl = data.url;
+         this.$emit("update:value", this.imgUrl);
       })
       .catch(() => {
         // xxx
@@ -64,13 +76,7 @@ export default {
     }
   },
   created() {},
-  mounted() {},
-  props: {
-    imgUrl: {
-      type: String,
-      default: ""
-    }
-  }
+  mounted() {}
 };
 </script>
 <style lang="scss">

@@ -52,9 +52,8 @@
                     </template>
                     <!-- 图片上传 -->
                     <template v-if="item.type === 'Upload'">
-                        <img :src="formData[item.prop]" v-if="formMode === 'views'"></div>
-                        <Upload v-else :listType="item.listType" :imgUrl.sync="formData[item.prop]"/>
-                        asdf
+                        <img :src="formData[item.prop]" v-if="formMode === 'views'" />
+                        <Upload v-else :initImg="formData[item.prop]" :value.sync="formData[item.prop]"/>
                     </template>
                     <!-- slot -->
                     <slot v-if="item.type === 'Slot'" :name="item.slotName" />

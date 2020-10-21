@@ -22,6 +22,11 @@
                             <div v-if="formMode === 'views'">{{ formData[inline_form.prop] }}</div>
                             <el-input-number v-else v-model="formData[inline_form.prop]" controls-position="right" :min="inline_form.min || 0" :max="inline_form.max || 100000" :placeholder="inline_form.placeholder" :style="{width: inline_form.width}" :disabled="inline_form.disabled" @blur="inputNumberBlur(inline_form)" @change="inline_form.handler && inline_form.handler(formData[inline_form.prop])"></el-input-number>
                         </template>
+                        <!-- 图片上传 -->
+                        <template v-if="inline_form.type === 'Upload'">
+                            <img v-if="formMode === 'views'" :src="formData[inline_form.prop]" />
+                            <Upload v-else :initImg="formData[inline_form.prop]" :value.sync="formData[inline_form.prop]"/>
+                        </template>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -30,9 +35,10 @@
 </template>
 
 <script>
+import Upload from "../Upload";
 export default {
   name: '',
-  components: {},
+  components: { Upload },
   props: {
     data: {
         type: Object,
