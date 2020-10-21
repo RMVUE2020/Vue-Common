@@ -51,9 +51,10 @@
                         <Wangeditor ref="Wangeditor" v-else :value="formData[item.prop]" :content.sync="formData[item.prop]"/>
                     </template>
                     <!-- 图片上传 -->
-                    <template v-if="item.type === 'UploadImg'">
+                    <template v-if="item.type === 'Upload'">
                         <img :src="formData[item.prop]" v-if="formMode === 'views'"></div>
-                        <UploadImg v-else :listType="item.listType" :imgUrl.sync="formData[item.prop]"/>
+                        <Upload v-else :listType="item.listType" :imgUrl.sync="formData[item.prop]"/>
+                        asdf
                     </template>
                     <!-- slot -->
                     <slot v-if="item.type === 'Slot'" :name="item.slotName" />
@@ -81,14 +82,14 @@
     </el-form>
 </template>
 <script>
-import Wangeditor from "@/components/Wangeditor";
-import UploadImg from "@/components/UploadImg";
+import Wangeditor from "../Wangeditor";
+import Upload from "../Upload";
 import InlineFormItem from "./inlineFormItem";
 // utils/format
 import { dateTime } from "@/utils/format";
 export default {
     name: "Form",
-    components: { Wangeditor, UploadImg, InlineFormItem },
+    components: { Wangeditor, Upload, InlineFormItem },
     props: {
         labelWidth: {
             type: String,
