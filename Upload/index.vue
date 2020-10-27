@@ -93,6 +93,7 @@ export default {
 .upload-wrap {
   display: inline-block;
   position: relative;
+  max-width: 100%;
   &:hover {
     .clear { display: block; }
   }
