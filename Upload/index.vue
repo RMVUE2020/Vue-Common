@@ -127,7 +127,7 @@ export default {
 </style>
 <style lang="scss">
 .avatar-uploader {
-  
+  max-width: 100%;
 }
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
