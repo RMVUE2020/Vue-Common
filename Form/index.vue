@@ -147,7 +147,7 @@ export default {
                 "Radio": "请选择",
                 "Select": "请选择",
                 "Date": "请选择",
-                "UploadImg": "请上传",
+                "Upload": "请上传",
                 "Wangeditor": "请填写",
                 "InputNumber": "请填写",
             }
