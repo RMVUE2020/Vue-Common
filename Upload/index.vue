@@ -1,5 +1,8 @@
 <template>
+  <div class="upload-wrap">
+    <i class="clear" @click="clearUplaodFile"></i>
     <el-upload
+      ref="upload"
       class="avatar-uploader"
       list-type="picture-card"
       action="fakeaction"
@@ -9,6 +12,7 @@
       <img v-if="imgUrl" :src="imgUrl" alt="" width="100%" height="100%">
       <i class="el-icon-plus"></i>
     </el-upload>
+  </div>
 </template>
 
 <script>
@@ -41,6 +45,12 @@ export default {
   },
   computed: {},
   methods: {
+    // 清除文件
+    clearUplaodFile(){
+      this.$refs.upload.clearFiles();
+      this.imgUrl = "";
+      this.$emit("update:value", "");
+    },
     uploadSectionFile(params) {
       const file = params.file,
         fileType = file.type,
@@ -79,6 +89,42 @@ export default {
   mounted() {}
 };
 </script>
+<style lang="scss" scoped>
+.upload-wrap {
+  display: inline-block;
+  position: relative;
+  &:hover {
+    .clear { display: block; }
+  }
+  .clear {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 10;
+    width: 14px;
+    height: 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    background-color: #000;
+    &:before, &:after {
+      display: block;
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 3px;
+      height: 8px;
+      border-right: 1px solid #fff;
+    }
+    &:before {
+      transform: rotate(45deg);
+    }
+    &:after {
+      transform: rotate(-45deg);
+    }
+  }
+}
+</style>
 <style lang="scss">
 .avatar-uploader {
   
