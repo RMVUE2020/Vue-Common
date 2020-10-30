@@ -150,7 +150,6 @@ export default {
             this.loadData();
         },
         loadData(){
-
             // url 不存在时不请求接口
             if(!this.table_config.url) { return false; }
             let requestData = {

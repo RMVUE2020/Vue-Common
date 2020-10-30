@@ -21,9 +21,11 @@
                     <el-button v-if="item.element === 'button'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="item.handler && item.handler()">
                         {{ item.label }}
                     </el-button>
-                    <el-button v-if="item.element === 'link'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="item.handler && item.handler()">
-                        <router-link :to="item.link">{{ item.label }}</router-link>
-                    </el-button>
+                    <router-link :to="item.link" v-if="item.element === 'link'" :key="item.key" style="margin: 0 10px;">
+                        <el-button :disabled="item.disabled"  :type="item.type" @click="item.handler && item.handler()">
+                            {{ item.label }}
+                        </el-button>
+                    </router-link>
                     <el-button v-if="item.element === 'export'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="handerlExport">
                         {{ item.label }}
                     </el-button>
