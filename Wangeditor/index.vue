@@ -17,6 +17,8 @@ export default {
   props: ['catchData'], // 接收父组件的方法
   mounted() {
     this.editor = new E(this.$refs.editorElem);
+    // 图片 base64
+    this.editor.customConfig.uploadImgShowBase64 = true;
     // 编辑器的事件，每次改变会获取其html内容
     this.editor.customConfig.onchange = html => {
       this.editorContent = html;
