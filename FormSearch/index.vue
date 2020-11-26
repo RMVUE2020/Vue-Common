@@ -114,7 +114,7 @@ export default {
          * 对象数据处理
          */
         handlerUsername(){
-            return this.form_data.username;
+            return this.form_data.user_id;
             /** 去除原业务需求 */
             // if(!this.form_data.username) { return ""; }
             // const data = this.tableData.filter(item => item.username == this.form_data.user_id);
