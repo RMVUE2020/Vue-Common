@@ -1,16 +1,18 @@
 <template>
     <el-form inline ref="form" :model="form_data">
         <el-form-item v-for="item in formItme" :key="item.prop" :prop="item.prop" :rules="item.rules" :class="{noLabel: item.noLabel}">
-            <!-- Username-->
-            <el-input ref="username" v-if="item.type === 'Username'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
-            <!-- Input-->
-            <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
-            <!-- Select-->
-            <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
-                <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
-            </el-select>
-            <!-- 日期 -->
-            <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
+            <template v-if="!item.lang || item.lang === lang">
+                <!-- Username-->
+                <el-input ref="username" v-if="item.type === 'Username'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
+                <!-- Input-->
+                <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
+                <!-- Select-->
+                <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
+                    <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
+                </el-select>
+                <!-- 日期 -->
+                <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
+            </template>
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
@@ -41,6 +43,8 @@ export default {
     components: {},
     data(){
         return {
+            // 语言
+            lang: this.$store.state.app.lang,
             form_config: {
                 resetButton: true
             },
