@@ -8,7 +8,7 @@
                 <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
                 <!-- Select-->
                 <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
-                    <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
+                    <el-option v-for="selectItem in handlerOption(item.options)" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
                 </el-select>
                 <!-- 日期 -->
                 <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
@@ -131,6 +131,17 @@ export default {
             const date = this.form_data[item.prop];
             this.form_data[item.felid_start] = date ? date[0] : "";
             this.form_data[item.felid_end] = date ? date[1] : "";
+        },
+        handlerOption(data){
+            if(!data) { return false; }
+            const options = [];
+            for(let key in data) {
+                const obj = data[key];
+                if(!obj.lang || obj.lang === this.lang) {
+                    options.push(data[key])
+                }
+            }
+            return options;
         },
         /** 导出 */
         handerlExport(){
