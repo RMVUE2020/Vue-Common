@@ -8,7 +8,7 @@
                 <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
                 <!-- Select-->
                 <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
-                    <el-option v-for="selectItem in handlerOption(item.options)" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
+                    <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
                 </el-select>
                 <!-- 日期 -->
                 <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
@@ -111,8 +111,30 @@ export default {
             }
         },
         selectOptions(data){
-            const options = data.options;
-            data.options = this.$store.state.config[data.options];
+            let options = this.$store.state.config[data.options];
+            // 指定项的匹配
+            let optionsArr = [];
+            if(data.key && data.key.length > 0) {
+                data.key.forEach(item => {
+                    for(let key in options) {
+                        if(key === item) {
+                            optionsArr.push(options[key])
+                        }
+                    }
+                })
+            }else {
+                optionsArr = options;
+            }
+            // 语言处理
+            const optionsLang = [];
+            for(let key in optionsArr) {
+                const obj = optionsArr[key];
+                if(!obj.lang || obj.lang === this.lang) {
+                    optionsLang.push(optionsArr[key])
+                }
+            }
+            // 更新数据
+            data.options = optionsLang;
         },
         /**
          * 对象数据处理
@@ -133,7 +155,8 @@ export default {
             this.form_data[item.felid_end] = date ? date[1] : "";
         },
         handlerOption(data){
-            if(!data) { return false; }
+            console.log(data)
+            if(!data) { return []; }
             const options = [];
             for(let key in data) {
                 const obj = data[key];
