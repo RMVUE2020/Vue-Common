@@ -17,8 +17,15 @@ export default {
   props: ['catchData'], // 接收父组件的方法
   mounted() {
     this.editor = new E(this.$refs.editorElem);
-    // 图片 base64
-    this.editor.customConfig.uploadImgShowBase64 = true;
+    //开启debug模式
+    this.editor.customConfig.debug = true;
+    this.editor.customConfig.uploadImgShowBase64 = false // base 64 存储图片，如果这个参数设置为true的话，就不用配置服务器端上传地址
+    this.editor.customConfig.showLinkImg = false  //   禁止上传网络图片
+    this.editor.customConfig.uploadImgServer = process.env.VUE_APP_FILE_UPLOAD + "/file/upload"// 这是服务器端上传图片的接口路径
+    this.editor.customConfig.uploadFileName = 'file' // 后端接受上传文件的参数名
+    this.editor.customConfig.uploadImgMaxSize = 2 * 1024 * 1024 // 将图片大小限制为 2M
+    this.editor.customConfig.uploadImgMaxLength = 6 // 限制一次最多上传 6张图片
+    this.editor.customConfig.uploadImgTimeout = 3 * 60 * 1000 // 设置超时时间
     // 编辑器的事件，每次改变会获取其html内容
     this.editor.customConfig.onchange = html => {
       this.editorContent = html;
@@ -47,6 +54,33 @@ export default {
       'undo', // 撤销
       'redo' // 重复
     ];
+    this.editor.customConfig.uploadImgHooks = {
+      fail: (xhr, editor, result) => {
+        // 插入图片失败回调
+        console.log(xhr, editor,result)
+      },
+      success: (xhr, editor, result) => {
+        // 图片上传成功回调
+        console.log(xhr, editor)
+      },
+      timeout: (xhr, editor) => {
+        // 网络超时的回调
+        console.log(xhr, editor)
+      },
+      error: (xhr, editor) => {
+        console.log(xhr, editor)
+        // 图片上传错误的回调
+      },
+      customInsert: function (insertImg, result, editor) {
+        var url = result.data.url;
+        insertImg(url);
+      }
+    }
+
+
+
+
+
     this.editor.create(); // 创建富文本实例
   },
   methods: {
