@@ -21,7 +21,7 @@ export default {
     this.editor.customConfig.debug = true;
     this.editor.customConfig.uploadImgShowBase64 = false // base 64 存储图片，如果这个参数设置为true的话，就不用配置服务器端上传地址
     this.editor.customConfig.showLinkImg = false  //   禁止上传网络图片
-    this.editor.customConfig.uploadImgServer = process.env.VUE_APP_FILE_UPLOAD + "/file/minio/upload"// 这是服务器端上传图片的接口路径
+    this.editor.customConfig.uploadImgServer = process.env.VUE_APP_FILE_UPLOAD + process.env.VUE_APP_FILE_UPLOAD_API // 这是服务器端上传图片的接口路径
     this.editor.customConfig.uploadFileName = 'file' // 后端接受上传文件的参数名
     this.editor.customConfig.uploadImgMaxSize = 2 * 1024 * 1024 // 将图片大小限制为 2M
     this.editor.customConfig.uploadImgMaxLength = 6 // 限制一次最多上传 6张图片
