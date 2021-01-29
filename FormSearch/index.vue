@@ -1,16 +1,18 @@
 <template>
     <el-form inline ref="form" :model="form_data">
         <el-form-item v-for="item in formItme" :key="item.prop" :prop="item.prop" :rules="item.rules" :class="{noLabel: item.noLabel}">
-            <!-- Username-->
-            <el-input ref="username" v-if="item.type === 'Username'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
-            <!-- Input-->
-            <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
-            <!-- Select-->
-            <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
-                <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
-            </el-select>
-            <!-- 日期 -->
-            <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
+            <template v-if="!item.lang || item.lang === lang">
+                <!-- Username-->
+                <el-input ref="username" v-if="item.type === 'Username'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
+                <!-- Input-->
+                <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
+                <!-- Select-->
+                <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
+                    <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
+                </el-select>
+                <!-- 日期 -->
+                <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
+            </template>
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
@@ -41,6 +43,8 @@ export default {
     components: {},
     data(){
         return {
+            // 语言
+            lang: this.$store.state.app.lang,
             form_config: {
                 resetButton: true
             },
@@ -107,15 +111,40 @@ export default {
             }
         },
         selectOptions(data){
-            const options = data.options;
-            data.options = this.$store.state.config[data.options];
+            let options = this.$store.state.config[data.options];
+            // 指定项的匹配
+            let optionsArr = [];
+            if(data.key && data.key.length > 0) {
+                data.key.forEach(item => {
+                    for(let key in options) {
+                        if(key === item) {
+                            optionsArr.push(options[key])
+                        }
+                    }
+                })
+            }else {
+                optionsArr = options;
+            }
+            // 语言处理
+            const optionsLang = [];
+            for(let key in optionsArr) {
+                const obj = optionsArr[key];
+                if(!obj.lang || obj.lang === this.lang) {
+                    optionsLang.push(optionsArr[key])
+                }
+            }
+            // 更新数据
+            data.options = optionsLang;
         },
         /**
          * 对象数据处理
          */
         handlerUsername(){
-            const data = this.tableData.filter(item => item.username == this.form_data.user_id);
-            return (data.length > 0) ? data[0].user_id : this.form_data.user_id;
+            return this.form_data.user_id;
+            /** 去除原业务需求 */
+            // if(!this.form_data.username) { return ""; }
+            // const data = this.tableData.filter(item => item.username == this.form_data.user_id);
+            // return (data.length > 0) ? data[0].user_id : this.form_data.user_id;
         },
         handlerData(item){
             // 参数不存在时
@@ -124,6 +153,18 @@ export default {
             const date = this.form_data[item.prop];
             this.form_data[item.felid_start] = date ? date[0] : "";
             this.form_data[item.felid_end] = date ? date[1] : "";
+        },
+        handlerOption(data){
+            console.log(data)
+            if(!data) { return []; }
+            const options = [];
+            for(let key in data) {
+                const obj = data[key];
+                if(!obj.lang || obj.lang === this.lang) {
+                    options.push(data[key])
+                }
+            }
+            return options;
         },
         /** 导出 */
         handerlExport(){

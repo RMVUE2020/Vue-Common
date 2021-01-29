@@ -23,8 +23,9 @@
                     <template v-if="item.type === 'Select'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
                         <el-select v-else filterable v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @change="item.handler && item.handler(formData[item.prop])">
-                            <el-option v-for="selectItem in item.options" :key="selectItem.value || selectItem[item.select_vlaue]" :value="selectItem.value || selectItem[item.select_vlaue]" :label="selectItem.label || selectItem[item.select_label]"></el-option>
+                            <el-option v-for="selectItem in selectOptions(item)" :key="selectItem.value || selectItem[item.select_vlaue]" :value="selectItem.value || selectItem[item.select_vlaue]" :label="selectItem.label || selectItem[item.select_label]"></el-option>
                         </el-select>
+                        <slot v-if="item.slotName" :name="item.slotName" />
                     </template>
                     <!-- 禁启用 -->
                     <template v-if="item.type === 'Disabled'">
@@ -43,7 +44,7 @@
                     <!-- 日期 -->
                     <template v-if="item.type === 'Date'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop + '_start'] | fotmatDate(item.viewsValue) }} - {{ formData[item.prop + '_end'] | fotmatDate(item.viewsValue) }}</div>
-                        <el-date-picker v-else v-model="formData[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" @change="handlerData($event, item)"></el-date-picker>
+                        <el-date-picker v-else v-model="formData[item.prop]" :disabled="item.disabled" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" @change="handlerData($event, item)" :style="{width: item.width}" ></el-date-picker>
                     </template>
                     <!-- 编辑器 -->
                     <template v-if="item.type === 'Wangeditor'">
@@ -200,12 +201,32 @@ export default {
                 this.formData[item.felid_start] = startTime;
                 this.formData[item.felid_end] = endTime;
             }
+            // 是否有回调
+            if(item.callback) { item.callback(); }
         },
         inputNumberBlur(data){
             const toFixed = data.toFixed
             if(toFixed) {
                 this.formData[data.prop] = this.formData[data.prop].toFixed(toFixed)
             }
+        },
+        /** 下拉菜单选项 */
+        selectOptions(params){
+            let options = params.options;
+            // 指定项的匹配
+            let optionsArr = [];
+            if(params.key && params.key.length > 0) {
+                params.key.forEach(item => {
+                    for(let key in options) {
+                        if(key === item) {
+                            optionsArr.push(options[key])
+                        }
+                    }
+                })
+            }else {
+                optionsArr = options;
+            }
+            return optionsArr;
         }
     },
     watch: {

@@ -5,13 +5,15 @@
             <span :style="data.styleCss">{{ data.label }}</span>
         </div>
         <div class="wrap-col">
-            <el-row :gutter="15">
+            <el-row :gutter="15" :style="data.styleCssContent">
                 <el-col :span="data.colSpan" v-for="inline_form in data.inlineFormItem" :key="inline_form.prop" >
                     <el-form-item :label="inline_form.label" :prop="inline_form.prop" :rules="inline_form.rules" :class="{noLabel: inline_form.noLabel}">
                         <!-- Input-->
                         <template v-if="inline_form.type === 'Input'">
                             <div v-if="formMode === 'views'">{{ formData[inline_form.prop] }}</div>
-                            <el-input v-else v-model.trim="formData[inline_form.prop]" :maxlength="inline_form.max" :minlength="inline_form.min" :placeholder="inline_form.placeholder" :rules="inline_form.rules" :style="{width: inline_form.width}" :disabled="inline_form.disabled"></el-input>
+                            <el-input v-else v-model.trim="formData[inline_form.prop]" :maxlength="inline_form.max" :minlength="inline_form.min" :placeholder="inline_form.placeholder" :rules="inline_form.rules" :style="{width: inline_form.width}" :disabled="inline_form.disabled">
+                                <template slot="append" v-if="inline_form.unit_slot">{{ inline_form.unit_slot }}</template>
+                            </el-input>
                         </template>
                         <!-- Input-->
                         <template v-if="inline_form.type === 'Text'">
