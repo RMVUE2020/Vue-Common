@@ -1,4 +1,7 @@
-.header-wrap { padding-top: 85px; }
+.container { 
+  width: $themePintuanPc-container;
+  margin: auto;
+}
 header.header {
   position: fixed;
   left: 0;
@@ -30,12 +33,12 @@ header.header {
   }
 }
 .border-menu {
-  border: 1px solid $color_3;
+  border: 1px solid #333;
   line-height: 26px;
   border-radius: 100px;
   padding: 0 10px;
   font-size: 14px;
-  color: $color_3;
+  color: #333;
   font-family: "MR";
 }
 .user-menu {
@@ -88,7 +91,7 @@ header.header {
     font-size: 14px;
     line-height: 20px;
     padding: 4px 16px;
-    color: $color_3;
+    color: #333;
     overflow: hidden;
     cursor: pointer;
     @include webkit(transition, all .3s ease 0s);
@@ -111,16 +114,16 @@ header.header {
       left: 0;
       right: 0;
       bottom: 0;
-      border-top: 3px solid $color_main;
+      border-top: 3px solid #FFD400;
     }
     &:hover, &.active {
       &:before { display: block; }
     }
     &.active {
-      a { color: $color_main; }
+      span { color: #FFD400; }
     }
   }
-  a {
+  span {
     line-height: normal;
     font-size: 16px;
     font-family: "IR";
@@ -131,4 +134,76 @@ header.header {
 .user-info-wrap {
   float: right;
   margin-top: 28px;
+}
+
+
+/* 按钮样式 组合 */
+.button-ui {
+    display: inline-block;
+    padding: 0 27px;
+    background-color: white;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #C6CBDA;
+    border-radius: 2px;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    @include webkit(transition, all .3s ease 0s);
+    @include webkit(box-sizing, border-box);
+    span { 
+        display: block;
+        padding: 10px 0;
+        line-height: 22px;
+        font-size: 16px;
+        font-family: "MM";
+        @include webkit(transition, all .3s ease 0s);
+    }
+}
+.button-ui-round { border-radius: 100px; }
+.button-ui-block { width:100%; display: block; }
+/* 按钮颜色 */
+.button-ui-default {
+    &:hover { 
+        border-color: $themePtcn;
+        span { color: $themePtcn; }
+    }
+    &.is-plain {
+        color: #fff;
+        background-color: transparent;
+    }
+}
+.button-ui-primary {
+    border-color: $themePtcn;
+    background-color: $themePtcn;
+    span { color: #333; }
+    &:hover {
+        border-color: #FFDF5A;
+        background-color: #FFDF5A;
+    }
+}
+
+/* 按钮尺寸 */
+.button-ui-larger {
+    span {
+        padding: 9px 0;
+        line-height: 28px;
+        font-size: 20px;
+    }
+}
+.button-ui-small {
+    padding: 0 20px;
+    span {
+        padding: 5px 0;
+        font-size: 16px;
+        line-height: 22px;
+    }
+}
+.button-ui-mini {
+    padding: 0 20px;
+    span {
+        padding: 5px 0 4px;
+        font-size: 12px;
+        line-height: 17px;
+    }
 }

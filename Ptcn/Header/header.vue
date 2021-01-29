@@ -5,24 +5,23 @@
         <h1 class="logo"><router-link to="/"><img :src="logo_img" /></router-link></h1>
         <nav class="nav-link">
           <ul>
-            <li v-for="item in nav_menu" :value="item.value" :class="{active: item.link == current_menu}">
-              <a v-if="item.tag == 'a'" :key="item.value" :href="item.link" target="_blank" class="pop-hover">
+            <li v-for="item in nav_menu" :value="item.value" :class="{active: item.link == current_menu}" @click="handlerNav(item)">
+              <span :key="item.value" target="_blank" class="pop-hover">
                 {{ item.label }}
                 <template v-if="item.value == 'app'"><PopContact dir="top" /></template>
-              </a>
-              <router-link v-else :to="item.link">{{ item.label }}</router-link>
+              </span>
             </li>
           </ul>
         </nav>
         <!-- 不存在 token -->
         <div class="user-info-wrap">
           <div class="account" v-if="!token">
-            <a @click="toLogin('loginPtcn')" href="javascript: void(0);" class="button-ui button-ui-default button-ui-mini is-plain">
+            <a @click="toLogin('login')" href="javascript: void(0);" class="button-ui button-ui-default button-ui-mini is-plain">
               <span>{{ $t('common.login') }}</span>
             </a>
             
             <span class="line"></span>
-            <a @click="toLogin('registerPtcn')" href="javascript: void(0);" class="button-ui button-ui-primary button-ui-mini">
+            <a @click="toLogin('register')" href="javascript: void(0);" class="button-ui button-ui-primary button-ui-mini">
               <span>{{ $t('common.reg') }}</span>
             </a>
           </div>
@@ -53,7 +52,7 @@
 
 <script>
 import { formatUserName } from "@/utils/common";
-import PopContact from "@/components/Pop/popContact";
+import PopContact from "./Pop/popContact";
 export default {
   name: 'Header',
   components: { PopContact },
@@ -65,15 +64,15 @@ export default {
   },
   data() {
     return {
-      username: this.$store.state.app.username,
-      nav_menu: this.$store.state.app.nav_menu,
-      logo_img: require("@/assets/logo.png")
+      username: this.$store.state.account.username,
+      nav_menu: this.$store.state.config.nav_menu,
+      logo_img: require("./images/logo.png")
     };
   },
   watch: {},
   computed: {
     token(){
-      return this.$store.state.app.token;
+      return this.$store.state.account.token;
     },
     current_menu(){
       const { path } = this.$route;
@@ -95,6 +94,12 @@ export default {
       }
     },
     handlerNav(data){
+      // 判断是否处理模块项目
+      const modules = process.env.VUE_APP_MODULES;
+      if(modules) {
+        this.$store.dispatch("app/nav", data);
+        return false;
+      }
       this.current_menu = data.value;
       const tag = data.tag;
       const current_path = this.$route.path;
