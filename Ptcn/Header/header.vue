@@ -64,7 +64,7 @@ export default {
   },
   data() {
     return {
-      username: this.$store.state.account.username,
+      username: this.$store.state.account ? this.$store.state.account.username : this.$store.state.app.username,
       nav_menu: this.$store.state.config.nav_menu,
       logo_img: require("./images/logo.png")
     };
@@ -72,7 +72,7 @@ export default {
   watch: {},
   computed: {
     token(){
-      return this.$store.state.account.token;
+      return this.$store.state.account ? this.$store.state.account.token : this.$store.state.app.token
     },
     current_menu(){
       const { path } = this.$route;
@@ -100,16 +100,15 @@ export default {
         this.$store.dispatch("app/nav", data);
         return false;
       }
-      this.current_menu = data.value;
       const tag = data.tag;
-      const current_path = this.$route.path;
-      console.log(data)
+      
       if(tag === "a") {
         window.open(data.link)
       }else{
-        if(current_path == data.router) { return false; }
+        const current_path = this.$route.path;
+        if(current_path === data.link) { return false; }
         this.$router.push({
-          path: data.router
+          path: data.link
         })
       }
     },
