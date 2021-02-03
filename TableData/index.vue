@@ -164,9 +164,10 @@ export default {
             GetTableData(requestData).then(response => {
                 const data = response.data;
                 // 判断数据是否存在
-                if(data.lists) { this.table_data = data.lists }
-                if(!data.lists) { this.table_data = [] }
+                this.table_data = data.lists || data;
+                // 页码统计
                 this.total = data.count;
+                // 加载提示
                 this.loading_table = false;
                 // 加载完成后回调
                 if(this.table_config.onload) { 
