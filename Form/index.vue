@@ -7,7 +7,7 @@
                     <!-- Input-->
                     <template v-if="item.type === 'Input' && !formItemHide[item.prop]" >
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
-                        <el-input v-else v-model.trim="formData[item.prop]" :maxlength="item.max" :minlength="item.min" :placeholder="item.placeholder" :style="{width: item.width || inputWidth}" :disabled="item.disabled"></el-input>
+                        <el-input v-else v-model.trim="formData[item.prop]" :maxlength="item.max" :minlength="item.min" :placeholder="item.placeholder" :style="{width: item.width || inputWidth}" :disabled="item.disabled" v-on:input="item.handler && (item.handlerEevnt ? item.handlerEevnt(formData[item.prop]) : inputEnter(item))"></el-input>
                     </template>
                     <!-- Textarea -->
                     <template v-if="item.type === 'Textarea' && !formItemHide[item.prop]" >
@@ -227,6 +227,13 @@ export default {
                 optionsArr = options;
             }
             return optionsArr;
+        },
+        // 输入框
+        inputEnter(data){
+            if(data.lowercase) { this.handlerLowercase(data); }
+        },
+        handlerLowercase(data){
+            this.formData[data.prop] = this.formData[data.prop].toLowerCase();
         }
     },
     watch: {
