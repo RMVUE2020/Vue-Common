@@ -114,7 +114,22 @@ export default {
       }
     },
     toLogin(type){
-      this.$store.dispatch("app/toLogin", type);
+      const hostname = window.location.hostname;
+      // 获取项目
+      const project = process.env.VUE_APP_THEME;
+      // 域名后缀
+      const suffix = hostname.indexOf(".cn") != -1 ? "CN" : "COM";
+      // 获取环境变量指定域名
+      const domain = process.env[`VUE_APP_DOMAIN_${suffix}`];
+      // 路由
+      const router = `${type}_${project}`;
+      // 新地址
+      const url = `${domain}/#/${router}?type=${project}`;
+      // 跳转
+      window.location.href = url;
+      // VUE_APP_DOMAIN_CN
+      // VUE_APP_DOMAIN_COM
+      // http://www.rockminer.com/#/login_ptcn?type=ptcn
     },
     logout(){
       let routerName = this.$route.name;
