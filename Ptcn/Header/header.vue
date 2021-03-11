@@ -116,7 +116,7 @@ export default {
     toLogin(type){
       const hostname = window.location.hostname;
       // 获取项目
-      const project = process.env.VUE_APP_THEME;
+      const project = sessionStorage.getItem("theme");
       // 域名后缀
       const suffix = hostname.indexOf(".cn") != -1 ? "cn" : "com";
       // 获取环境变量指定域名
