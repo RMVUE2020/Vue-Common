@@ -96,7 +96,7 @@ export default {
     },
     handlerNav(data){
       // 判断是否处理模块项目
-      const modules = process.env.VUE_APP_MODULES;
+      const modules = process.env.VUE_APP_PTCN_MODULES;
       if(modules) {
         this.$store.dispatch("app/nav", data);
         return false;
@@ -118,17 +118,17 @@ export default {
       // 获取项目
       const project = process.env.VUE_APP_THEME;
       // 域名后缀
-      const suffix = hostname.indexOf(".cn") != -1 ? "CN" : "COM";
+      const suffix = hostname.indexOf(".cn") != -1 ? "cn" : "com";
       // 获取环境变量指定域名
-      const domain = process.env[`VUE_APP_DOMAIN_${suffix}`];
+      const domain = process.env[`VUE_APP_DOMAIN_${project}_${suffix}`];
       // 路由
       const router = `${type}_${project}`;
       // 新地址
       const url = `${domain}/#/${router}?type=${project}`;
       // 跳转
       window.location.href = url;
-      // VUE_APP_DOMAIN_CN
-      // VUE_APP_DOMAIN_COM
+      // VUE_APP_DOMAIN_ptcn_cn
+      // VUE_APP_DOMAIN_ptcn_com
       // http://www.rockminer.com/#/login_ptcn?type=ptcn
     },
     logout(){
