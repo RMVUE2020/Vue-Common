@@ -115,7 +115,7 @@ export default {
     },
     toLogin(type){
       // 获取项目
-      const project = sessionStorage.getItem("theme");
+      const project = process.env.VUE_APP_THEME || sessionStorage.getItem("theme");
       /**
        * 模块
        */
@@ -132,6 +132,7 @@ export default {
       const hostname = window.location.hostname;
       // 域名后缀
       const suffix = hostname.indexOf(".cn") != -1 ? "cn" : "com";
+      
       // 获取环境变量指定域名
       const domain = process.env[`VUE_APP_DOMAIN_${project}_${suffix}`];
       // 路由
@@ -140,9 +141,6 @@ export default {
       const url = `${domain}/#/${router}?type=${project}`;
       // 跳转
       window.location.href = url;
-      // VUE_APP_DOMAIN_ptcn_cn
-      // VUE_APP_DOMAIN_ptcn_com
-      // http://www.rockminer.com/#/login_ptcn?type=ptcn
     },
     logout(){
       let routerName = this.$route.name;
