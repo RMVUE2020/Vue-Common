@@ -95,14 +95,14 @@ export default {
       }
     },
     handlerNav(data){
-      // 判断是否处理模块项目
+      // 模块
       const modules = process.env.VUE_APP_PTCN_MODULES;
       if(modules) {
         this.$store.dispatch("app/nav", data);
         return false;
       }
+      // 非模块
       const tag = data.tag;
-      
       if(tag === "a") {
         window.open(data.link)
       }else{
