@@ -39,6 +39,7 @@
                 <router-link to="/incomeIndex" class="link">{{ $t('common.income') }}</router-link>
                 <router-link to="/orderIndex" class="link">{{ $t('common.order') }}</router-link>
                 <router-link to="/assetsIndex" class="link">{{ $t('common.assets') }}</router-link>
+                <router-link to="/electricIndex" class="link">服务费帐单</router-link>
                 <router-link to="/safeIndex" class="link">{{ $t('common.security') }}</router-link>
                 <div class="link" @click="logout">{{ $t('common.logout') }}</div>
               </ul>
