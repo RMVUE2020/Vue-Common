@@ -162,11 +162,19 @@ export default {
             }
             this.loading_table = true;
             GetTableData(requestData).then(response => {
-                const data = response.data;
+                const responseData = response.data;
+                let data = [];
+                // 检测是否存在 lists 对象
+                const listsObj = Object.keys(responseData).includes("lists");
+                if(listsObj) {
+                    data = responseData.lists || [];
+                }else {
+                    data = responseData || [];
+                }
                 // 判断数据是否存在
-                this.table_data = data.lists || data;
+                this.table_data = data;
                 // 页码统计
-                this.total = data.count;
+                this.total = responseData.count;
                 // 加载提示
                 this.loading_table = false;
                 // 加载完成后回调
