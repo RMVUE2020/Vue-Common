@@ -114,9 +114,22 @@ export default {
       }
     },
     toLogin(type){
-      const hostname = window.location.hostname;
       // 获取项目
       const project = sessionStorage.getItem("theme");
+      /**
+       * 模块
+       */
+      const modules = process.env.VUE_APP_PTCN_MODULES;
+      if(modules) {
+        const router = `/${type}_${project}`;
+        this.$router.push({ path: router});
+        return false;
+      }
+      /**
+       * 非模块
+       */
+      // 获取域名
+      const hostname = window.location.hostname;
       // 域名后缀
       const suffix = hostname.indexOf(".cn") != -1 ? "cn" : "com";
       // 获取环境变量指定域名
