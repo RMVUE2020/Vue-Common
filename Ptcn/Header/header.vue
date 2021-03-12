@@ -95,14 +95,14 @@ export default {
       }
     },
     handlerNav(data){
-      // 判断是否处理模块项目
-      const modules = process.env.VUE_APP_MODULES;
+      // 模块
+      const modules = process.env.VUE_APP_PTCN_MODULES;
       if(modules) {
         this.$store.dispatch("app/nav", data);
         return false;
       }
+      // 非模块
       const tag = data.tag;
-      
       if(tag === "a") {
         window.open(data.link)
       }else{
@@ -114,7 +114,33 @@ export default {
       }
     },
     toLogin(type){
-      this.$store.dispatch("app/toLogin", type);
+      // 获取项目
+      const project = process.env.VUE_APP_THEME || sessionStorage.getItem("theme");
+      /**
+       * 模块
+       */
+      const modules = process.env.VUE_APP_PTCN_MODULES;
+      if(modules) {
+        const router = `/${type}_${project}`;
+        this.$router.push({ path: router});
+        return false;
+      }
+      /**
+       * 非模块
+       */
+      // 获取域名
+      const hostname = window.location.hostname;
+      // 域名后缀
+      const suffix = hostname.indexOf(".cn") != -1 ? "cn" : "com";
+      
+      // 获取环境变量指定域名
+      const domain = process.env[`VUE_APP_DOMAIN_${project}_${suffix}`];
+      // 路由
+      const router = `${type}_${project}`;
+      // 新地址
+      const url = `${domain}/#/${router}?type=${project}`;
+      // 跳转
+      window.location.href = url;
     },
     logout(){
       let routerName = this.$route.name;
