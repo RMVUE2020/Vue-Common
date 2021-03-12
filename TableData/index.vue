@@ -181,7 +181,7 @@ export default {
                 if(this.table_config.onload) { 
                     this.$emit("callbackComponent", {
                         function: "onload",
-                        data 
+                        data: responseData
                     })
                 }
             }).catch(error => {
