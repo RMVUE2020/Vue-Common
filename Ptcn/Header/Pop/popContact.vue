@@ -23,7 +23,7 @@ export default {
     },
     data() {
         return {
-            img: "https://image.rockminer.com/official/wechat.png"
+            img: process.env.VUE_APP_DOWNLOAD_IMG
         };
     },
     watch: {},
