@@ -33,7 +33,7 @@ export default {
   watch: {
     initImg: {
       handler(newValue){
-        newValue && (this.imgUrl = newValue)
+        this.imgUrl = newValue
       }
     },
   },

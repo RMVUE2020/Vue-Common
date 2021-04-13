@@ -36,7 +36,7 @@
                     <el-table-column v-else-if="item.type === 'operation'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
                         <template slot-scope="scope">
                             <slot :name="item.slotName" :data="scope.row"></slot>
-                            <el-button v-if="item.deleteButton" size="small" @click="handlerDel(scope.row.id)">删除</el-button>
+                            <el-button v-if="item.deleteButton" size="small" @click="handlerDel(scope.row, item)">删除</el-button>
                         </template>
                     </el-table-column>
                     <!--纯文本渲染-->
@@ -130,7 +130,7 @@ export default {
         // 导出
         exportFile(data){
             let requestData = {
-                url: this.table_config.url + 'ExportFile',
+                url: this.table_config.url,
                 data: Object.assign(data, this.table_config.data),
             }
             Export(requestData).then(response => {
@@ -182,7 +182,7 @@ export default {
                 if(this.table_config.onload) { 
                     this.$emit("callbackComponent", {
                         function: "onload",
-                        data 
+                        data: responseData
                     })
                 }
             }).catch(error => {
@@ -206,23 +206,28 @@ export default {
             this.loadData();
         },
         /** 删除 */
-        handlerDel(id){
+        handlerDel(data, item){
             this.$confirm('确认删除此信息?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.rowId = id;
-                this.delete();
+                this.delete(data, item);
             }).catch(error => {
                 this.rowId = "";
             })
         },
-        delete(){
+        delete(data, item){
+            // 当前记录的ID
+            this.rowId = item.deleteInfo ? data[item.deleteInfo.value] : data["id"];
+            // 参数的KEY
+            const key = (item.deleteInfo && item.deleteInfo.key) ? item.deleteInfo.key : "id";
+            // 请求类型 method
+            const method = (item.deleteInfo && item.deleteInfo.method) ? item.deleteInfo.method : "DELETE";
             let requestData = {
-                url: `${this.table_config.url}Delete`,
-                method: "DELETE",
-                data: { id: parseInt(this.rowId) },
+                url: `${this.table_config.url}`,
+                method,
+                data: { [key]: parseInt(this.rowId) },
             }
             Delete(requestData).then(response => {
                 console.log(response)
