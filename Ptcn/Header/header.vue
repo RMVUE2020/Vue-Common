@@ -40,6 +40,7 @@
                 <router-link to="/orderIndex" class="link">{{ $t('common.order') }}</router-link>
                 <router-link to="/assetsIndex" class="link">{{ $t('common.assets') }}</router-link>
                 <router-link to="/electricIndex" class="link">服务费帐单</router-link>
+                <router-link to="/inviteIndex" class="link">邀请好友</router-link>
                 <router-link to="/safeIndex" class="link">{{ $t('common.security') }}</router-link>
                 <div class="link" @click="logout">{{ $t('common.logout') }}</div>
               </ul>

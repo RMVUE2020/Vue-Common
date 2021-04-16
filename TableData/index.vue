@@ -10,7 +10,7 @@
             @callbackComponent="callbackComponent" 
         />
         <slot name="other"></slot>
-        <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border :row-key="table_config.row_key" :expand-row-keys="[2045]" :tree-props="{children: 'children'}" style="width: 100%">
+        <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border :row-key="table_config.row_key" :tree-props="{children: 'children'}" style="width: 100%">
             <el-table-column v-if="table_config.checkbox" type="selection" width="35"></el-table-column>
             <template v-for="item in this.table_config.thead">
                 <template v-if="!item.lang || item.lang === lang">
@@ -82,6 +82,7 @@ export default {
             // tableData
             table_data: [],
             table_config: {
+                className: "",
                 thead: [],
                 checkbox: true,
                 row_key: "id",
