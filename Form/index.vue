@@ -41,6 +41,18 @@
                             <el-radio v-for="radio in item.options" :label="radio.value" :key="radio.value">{{ radio.label }}</el-radio>
                         </el-radio-group>
                     </template>
+                    <!-- 多选 -->
+                    <template v-if="item.type === 'Checkbox'">
+                        <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
+                        <el-checkbox-group v-else v-model="formData[item.prop]">
+                            <template v-if="item.options">
+                                <el-checkbox v-for="checkbox in item.options" :key="checkbox.id" :label="item.props ? checkbox[item.props.value] : checkbox.value" >{{ item.props ? checkbox[item.props.label] : checkbox.label }}</el-checkbox>
+                            </template>
+                            <template v-else="item.handler">
+                                {{ item.handler(item) }}
+                            </template>
+                        </el-checkbox-group>
+                    </template>
                     <!-- 日期 -->
                     <template v-if="item.type === 'Date'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop + '_start'] | fotmatDate(item.viewsValue) }} - {{ formData[item.prop + '_end'] | fotmatDate(item.viewsValue) }}</div>

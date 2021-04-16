@@ -10,7 +10,7 @@
             @callbackComponent="callbackComponent" 
         />
         <slot name="other"></slot>
-        <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border style="width: 100%">
+        <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border :row-key="table_config.row_key" :expand-row-keys="[2045]" :tree-props="{children: 'children'}" style="width: 100%">
             <el-table-column v-if="table_config.checkbox" type="selection" width="35"></el-table-column>
             <template v-for="item in this.table_config.thead">
                 <template v-if="!item.lang || item.lang === lang">
@@ -67,6 +67,7 @@
 // 组件
 import SearchForm from "../FormSearch";
 import { GetTableData, Delete, Export } from "@/api/common";
+import { treeData } from "@/utils/format";
 export default {
     name: "TableComponent",
     components: { SearchForm },
@@ -83,8 +84,10 @@ export default {
             table_config: {
                 thead: [],
                 checkbox: true,
+                row_key: "id",
                 url: "",
                 pagination: true,
+                tree: "",
                 data: {},
                 data_backup: {},
                 // 加载完成后回调
@@ -171,8 +174,15 @@ export default {
                 }else {
                     data = responseData || [];
                 }
-                // 判断数据是否存在
-                this.table_data = data;
+                // 判断是否处理树状
+                if(this.table_config.tree) {
+                    const aaa = treeData({data, id: this.table_config.tree.id, parent: this.table_config.tree.parent, child: this.table_config.tree.child});
+                    console.log(aaa)
+                    this.table_data = aaa;
+                }else{
+                    // 判断数据是否存在
+                    this.table_data = data;
+                }
                 // 页码统计
                 this.total = responseData.count;
                 // 加载提示
