@@ -36,7 +36,10 @@
                     <el-table-column v-else-if="item.type === 'operation'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
                         <template slot-scope="scope">
                             <slot :name="item.slotName" :data="scope.row"></slot>
-                            <el-button v-if="item.deleteButton" size="small" @click="handlerDel(scope.row, item)">删除</el-button>
+                            <template v-if="item.deleteButton">
+                                <el-button v-if="item.deleteMethod === 'get'" size="small" @click="handlerDelete(scope.row, item)">删除</el-button>
+                                <el-button v-else size="small" @click="handlerDel(scope.row, item)">删除</el-button>
+                            </template>
                         </template>
                     </el-table-column>
                     <!--纯文本渲染-->
@@ -66,7 +69,7 @@
 <script>
 // 组件
 import SearchForm from "../FormSearch";
-import { GetTableData, Delete, Export } from "@/api/common";
+import { GetTableData, Delete, DeleteApi, Export } from "@/api/common";
 import { treeData } from "@/utils/format";
 export default {
     name: "TableComponent",
@@ -248,7 +251,32 @@ export default {
                 this.loadData();
             }).catch(error => {
             })
-        }
+        },
+        handlerDelete(data, item){
+            this.$confirm('确认删除此信息?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.deleteFn(data, item);
+            }).catch(error => {
+                this.rowId = "";
+            })
+        },
+        deleteFn(data, item){
+            let requestData = {
+                url: `${this.table_config.url}`,
+                data: data[item.deleteInfo.key],
+            }
+            DeleteApi(requestData).then(response => {
+                this.$message({
+                    type: "success",
+                    message: response.message
+                })
+                this.loadData();
+            }).catch(error => {
+            })
+        },
     },
     props: {
         config: {

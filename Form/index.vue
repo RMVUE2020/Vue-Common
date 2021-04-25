@@ -7,7 +7,7 @@
                     <!-- Input-->
                     <template v-if="item.type === 'Input' && !formItemHide[item.prop]" >
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
-                        <el-input v-else v-model.trim="formData[item.prop]" :maxlength="item.max" :minlength="item.min" :placeholder="item.placeholder" :style="{width: item.width || inputWidth}" :disabled="item.disabled" v-on:input="item.handler && (item.handlerEevnt ? item.handlerEevnt(formData[item.prop]) : inputEnter(item))"></el-input>
+                        <el-input v-else v-model.trim="formData[item.prop]" :maxlength="item.max" :minlength="item.min" :placeholder="item.placeholder" :style="{width: item.width || inputWidth}" :disabled="item.disabled" v-on:input="item.handler && (item.handlerEevnt ? item.handlerEevnt(formData[item.prop], item) : inputEnter(item))"></el-input>
                     </template>
                     <!-- Textarea -->
                     <template v-if="item.type === 'Textarea' && !formItemHide[item.prop]" >
@@ -22,10 +22,13 @@
                     <!-- Select-->
                     <template v-if="item.type === 'Select'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
-                        <el-select v-else filterable v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @change="item.handler && item.handler(formData[item.prop])">
-                            <el-option v-for="selectItem in selectOptions(item)" :key="selectItem.value || selectItem[item.select_vlaue]" :value="selectItem.value || selectItem[item.select_vlaue]" :label="selectItem.label || selectItem[item.select_label]"></el-option>
-                        </el-select>
-                        <slot v-if="item.slotName" :name="item.slotName" />
+                        <template v-else>
+                            <el-select v-if="item.options" filterable v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @change="item.handler && item.handler(formData[item.prop])">
+                                <el-option v-for="selectItem in selectOptions(item)" :key="selectItem.value || selectItem[item.select_vlaue]" :value="selectItem.value || selectItem[item.select_vlaue]" :label="selectItem.label || selectItem[item.select_label]"></el-option>
+                            </el-select>
+                            <template v-else>{{ item.handlerApi && item.handlerApi(item) }}</template>
+                            <slot v-if="item.slotName" :name="item.slotName" />
+                        </template>
                     </template>
                     <!-- 禁启用 -->
                     <template v-if="item.type === 'Disabled'">
@@ -48,8 +51,8 @@
                             <template v-if="item.options">
                                 <el-checkbox v-for="checkbox in item.options" :key="checkbox.id" :label="item.props ? checkbox[item.props.value] : checkbox.value" >{{ item.props ? checkbox[item.props.label] : checkbox.label }}</el-checkbox>
                             </template>
-                            <template v-else="item.handler">
-                                {{ item.handler(item) }}
+                            <template v-else>
+                                {{ item.handlerApi && item.handlerApi(item) }}
                             </template>
                         </el-checkbox-group>
                     </template>

@@ -7,9 +7,21 @@
                 <!-- Input-->
                 <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
                 <!-- Select-->
-                <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
+
+                <!-- Select-->
+                <template v-if="item.type === 'Select'">
+                    <el-select v-if="item.options" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder">
+                        <el-option v-for="selectItem in item.options" :key="selectItem[item.select_value] || selectItem.value" :value="selectItem[item.select_value] || selectItem.value" :label="selectItem[item.select_label] || selectItem.label"></el-option>
+                    </el-select>
+                    <template v-else>{{ item.handlerApi && item.handlerApi(item) }}</template>
+                </template>
+
+
+
+
+                <!-- <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
                     <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
-                </el-select>
+                </el-select> -->
                 <!-- 日期 -->
                 <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
             </template>
@@ -95,7 +107,7 @@ export default {
                 // 字段处理
                 propItem[item.prop] = ""
                 // 下拉选择
-                if(item.type === "Select") { this.selectOptions(item); }
+                // if(item.type === "Select") { this.selectOptions(item); }
                 // 自定义检验规则
                 if(item.validator) { item.rules = item.validator; }
             })
@@ -134,6 +146,7 @@ export default {
                 }
             }
             // 更新数据
+            return optionsLang;
             data.options = optionsLang;
         },
         /**
