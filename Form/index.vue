@@ -18,6 +18,7 @@
                     <template v-if="item.type === 'InputNumber'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
                         <el-input-number v-else v-model="formData[item.prop]" controls-position="right" :min="item.min || 0" :max="item.max || 100000" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @blur="inputNumberBlur(item)" @change="item.handler && item.handler(formData[item.prop])"></el-input-number>
+                        <slot v-if="item.slot" name="InputNumber" />
                     </template>
                     <!-- Site 场地 -->
                     <template v-if="item.type === 'Site'">
