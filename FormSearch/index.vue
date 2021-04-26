@@ -7,29 +7,38 @@
                 <!-- Input-->
                 <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
                 <!-- Select-->
-
-                <!-- Select-->
                 <template v-if="item.type === 'Select'">
                     <el-select v-if="item.options" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder">
                         <el-option v-for="selectItem in item.options" :key="selectItem[item.select_value] || selectItem.value" :value="selectItem[item.select_value] || selectItem.value" :label="selectItem[item.select_label] || selectItem.label"></el-option>
                     </el-select>
                     <template v-else>{{ item.handlerApi && item.handlerApi(item) }}</template>
                 </template>
-
-
-
-
-                <!-- <el-select v-if="item.type === 'Select'" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder"  :style="{width: item.width || 'auto'}">
-                    <el-option v-for="selectItem in item.options" :key="selectItem.value" :value="selectItem.value" :label="selectItem.label"></el-option>
-                </el-select> -->
+                <!-- Site 场地 -->
+                <template v-if="item.type === 'Site'">
+                    <Site ref="site" :initImg="form_data[item.prop]" :value.sync="form_data[item.prop]" :data="item"/>
+                </template>
+                <!-- 矿池帐号 -->
+                <template v-if="item.type === 'Pool'">
+                    <Pool ref="pool" :initImg="form_data[item.prop]" :value.sync="form_data[item.prop]" :data="item"/>
+                </template>
+                <!-- 机器型号 -->
+                <template v-if="item.type === 'Machine'">
+                    <Machine  ref="machine" :initImg="form_data[item.prop]" :value.sync="form_data[item.prop]" :data="item"/>
+                </template>
+                <!-- 团号 -->
+                <template v-if="item.type === 'Team'">
+                    <Team  ref="team" :initImg="form_data[item.prop]" :value.sync="form_data[item.prop]" :data="item"/>
+                </template>
                 <!-- 日期 -->
                 <el-date-picker v-if="item.type === 'Date'" v-model="form_data[item.prop]" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" :start-placeholder="item.startPlaceholder || '开始日期'" :end-placeholder="item.endPlaceholder|| '结束日期'" @change="handlerData(item)"></el-date-picker>
             </template>
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
+            <template v-if="formItme.length > 0">
             <el-button type="primary" @click="search">搜索</el-button>
             <el-button type="primary" @click="reset" v-if="form_config.resetButton">重置</el-button>
+            </template>
             <template v-if="formHandler && formHandler.length > 0">
                 <template v-for="item in formHandler">
                     <el-button v-if="item.element === 'button'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="item.handler && item.handler()">
@@ -43,16 +52,25 @@
                     <el-button v-if="item.element === 'export'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="handerlExport">
                         {{ item.label }}
                     </el-button>
+                    <el-button v-if="item.element === 'import'" :disabled="item.disabled" :key="item.key" :type="item.type" @click="handerlImport(item)">
+                        {{ item.label }}
+                        <UploadFile :showFlag.sync="upload_file_show" :target="upload_target" />
+                    </el-button>
                 </template>
             </template>
         </el-form-item>
     </el-form>
 </template>
 <script>
-// mixins
+// 上传
+import UploadFile from "../Dialog/uploadFile";
+import Site from "../select/site";
+import Pool from "../select/pool";
+import Machine from "../select/machine";
+import Team from "../select/team";
 export default {
     name: "Form",
-    components: {},
+    components: { UploadFile, Site, Pool, Machine, Team },
     data(){
         return {
             // 语言
@@ -62,7 +80,9 @@ export default {
             },
             form_data: {},
             // 日期参数
-            date: {}
+            date: {},
+            upload_file_show: false,
+            upload_target: ""
         }
     },
     methods: {
@@ -100,6 +120,11 @@ export default {
                 function: "search",
                 data: { page: 1, pageSize: 10 }
             })
+            // 场地
+            if(this.$refs.site) { this.$refs.site[0].clear(); }
+            if(this.$refs.machine) { this.$refs.machine[0].clear(); }
+            if(this.$refs.pool) { this.$refs.pool[0].clear(); }
+            if(this.$refs.team) { this.$refs.team[0].clear(); }
         },
         initFormData(){
             const propItem = {};
@@ -168,7 +193,6 @@ export default {
             this.form_data[item.felid_end] = date ? date[1] : "";
         },
         handlerOption(data){
-            console.log(data)
             if(!data) { return []; }
             const options = [];
             for(let key in data) {
@@ -198,6 +222,11 @@ export default {
                 function: "exportFile",
                 data: searchData
             })
+        },
+        /** 导出 */
+        handerlImport(data){
+            this.upload_target = data.target;
+            this.upload_file_show = true;
         }
     },
     

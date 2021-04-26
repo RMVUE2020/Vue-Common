@@ -19,6 +19,14 @@
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
                         <el-input-number v-else v-model="formData[item.prop]" controls-position="right" :min="item.min || 0" :max="item.max || 100000" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @blur="inputNumberBlur(item)" @change="item.handler && item.handler(formData[item.prop])"></el-input-number>
                     </template>
+                    <!-- Site 场地 -->
+                    <template v-if="item.type === 'Site'">
+                        <Site :initImg="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
+                    </template>
+                    <!-- 矿池帐号 -->
+                    <template v-if="item.type === 'Pool'">
+                        <Pool :initImg="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
+                    </template>
                     <!-- Select-->
                     <template v-if="item.type === 'Select'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
@@ -100,11 +108,13 @@
 import Wangeditor from "../Wangeditor";
 import Upload from "../Upload";
 import InlineFormItem from "./inlineFormItem";
+import Site from "../select/site";
+import Pool from "../select/pool";
 // utils/format
 import { dateTime } from "@/utils/format";
 export default {
     name: "Form",
-    components: { Wangeditor, Upload, InlineFormItem },
+    components: { Wangeditor, Upload, InlineFormItem, Site, Pool },
     props: {
         labelWidth: {
             type: String,
