@@ -4,7 +4,7 @@
         v-for="item in options" 
         :key="item.id" 
         :value="item.id"
-        :label="item.poolName"
+        :label="item.poolAccount"
         >
         </el-option>
     </el-select>
