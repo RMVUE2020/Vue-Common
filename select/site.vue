@@ -25,6 +25,10 @@ export default {
         data: {
             type: Object,
             default: () => ({})
+        },
+        init: {
+            type: [Number, String],
+            default: ""
         }
     },
     beforeMount(){ this.getSiteList(); },
@@ -43,6 +47,12 @@ export default {
         data: {
             handler(newValue) {
                 console.log(newValue)
+            },
+            immediate: true
+        },
+        init: {
+            handler(newValue) {
+                this.value = newValue;
             },
             immediate: true
         }

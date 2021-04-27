@@ -22,11 +22,11 @@
                     </template>
                     <!-- Site 场地 -->
                     <template v-if="item.type === 'Site'">
-                        <Site :initImg="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
+                        <Site :init="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
                     </template>
                     <!-- 矿池帐号 -->
                     <template v-if="item.type === 'Pool'">
-                        <Pool :initImg="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
+                        <Pool :init="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
                     </template>
                     <!-- Select-->
                     <template v-if="item.type === 'Select'">
