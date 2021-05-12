@@ -12,7 +12,7 @@
 
 <script>
 // API
-// import { PoolList } from "@/api/pool";
+import { PoolList } from "@/api/pool";
 export default {
     name: "",
     data(){
@@ -31,7 +31,7 @@ export default {
             default: ""
         }
     },
-    // beforeMount(){ this.getPoolList(); },
+    beforeMount(){ this.getPoolList(); },
     methods: {
         getPoolList(){
             PoolList().then(response => {
