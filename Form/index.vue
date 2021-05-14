@@ -50,7 +50,12 @@
                     <template v-if="item.type === 'Radio'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
                         <el-radio-group v-else v-model="formData[item.prop]">
-                            <el-radio v-for="radio in item.options" :label="radio.value" :key="radio.value">{{ radio.label }}</el-radio>
+                            <template v-if="item.options">
+                                <el-radio v-for="radio in item.options" :label="radio.value || radio[item.props.value]" :key="radio.value || radio[item.props.value]">{{ radio.label || radio[item.props.label] }}</el-radio>
+                            </template>
+                            <template v-else>
+                                {{ item.handlerApi && item.handlerApi(item) }}
+                            </template>
                         </el-radio-group>
                     </template>
                     <!-- 多选 -->
