@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { UploadFile } from "@/api/common";
+import { UploadImg } from "@/api/common";
 export default {
   name: 'Upload',
   components: {},
@@ -69,10 +69,10 @@ export default {
       const form = new FormData();
       // 文件对象
       form.append("file", file);
-      // 本例子主要要在请求时添加特定属性，所以要用自己方法覆盖默认的action
-      form.append("clientType", 'xxx');
+      // 特定属性，所以要用自己方法覆盖默认的action
+      // form.append("clientType", 'xxx');
       // 项目封装的请求方法，下面做简单介绍
-      UploadFile(form).then(response => {
+      UploadImg(form).then(response => {
          const data = response.data;
          this.imgUrl = data.url;
          this.$emit("update:value", this.imgUrl);

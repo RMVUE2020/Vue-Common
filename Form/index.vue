@@ -7,7 +7,7 @@
                     <!-- Input-->
                     <template v-if="item.type === 'Input' && !formItemHide[item.prop]" >
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
-                        <el-input v-else v-model.trim="formData[item.prop]" :maxlength="item.max" :minlength="item.min" :placeholder="item.placeholder" :style="{width: item.width || inputWidth}" :disabled="item.disabled" v-on:input="item.handler && (item.handlerEevnt ? item.handlerEevnt(formData[item.prop]) : inputEnter(item))"></el-input>
+                        <el-input v-else v-model.trim="formData[item.prop]" :maxlength="item.max" :minlength="item.min" :placeholder="item.placeholder" :style="{width: item.width || inputWidth}" :disabled="item.disabled" v-on:input="item.handler && (item.handlerEevnt ? item.handlerEevnt(formData[item.prop], item) : inputEnter(item))"></el-input>
                     </template>
                     <!-- Textarea -->
                     <template v-if="item.type === 'Textarea' && !formItemHide[item.prop]" >
@@ -18,14 +18,26 @@
                     <template v-if="item.type === 'InputNumber'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
                         <el-input-number v-else v-model="formData[item.prop]" controls-position="right" :min="item.min || 0" :max="item.max || 100000" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @blur="inputNumberBlur(item)" @change="item.handler && item.handler(formData[item.prop])"></el-input-number>
+                        <slot v-if="item.slot" name="InputNumber" />
+                    </template>
+                    <!-- Site 场地 -->
+                    <template v-if="item.type === 'Site'">
+                        <Site :init="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
+                    </template>
+                    <!-- 矿池帐号 -->
+                    <template v-if="item.type === 'Pool'">
+                        <Pool :init="formData[item.prop]" :value.sync="formData[item.prop]" :data="item"/>
                     </template>
                     <!-- Select-->
                     <template v-if="item.type === 'Select'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
-                        <el-select v-else filterable v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @change="item.handler && item.handler(formData[item.prop])">
-                            <el-option v-for="selectItem in selectOptions(item)" :key="selectItem.value || selectItem[item.select_vlaue]" :value="selectItem.value || selectItem[item.select_vlaue]" :label="selectItem.label || selectItem[item.select_label]"></el-option>
-                        </el-select>
-                        <slot v-if="item.slotName" :name="item.slotName" />
+                        <template v-else>
+                            <el-select v-if="item.options" filterable v-model="formData[item.prop]" :placeholder="item.placeholder" :style="{width: item.width}" :disabled="item.disabled" @change="item.handler && item.handler(formData[item.prop])">
+                                <el-option v-for="selectItem in selectOptions(item)" :key="selectItem.value || selectItem[item.select_vlaue]" :value="selectItem.value || selectItem[item.select_vlaue]" :label="selectItem.label || selectItem[item.select_label]"></el-option>
+                            </el-select>
+                            <template v-else>{{ item.handlerApi && item.handlerApi(item) }}</template>
+                            <slot v-if="item.slotName" :name="item.slotName" />
+                        </template>
                     </template>
                     <!-- 禁启用 -->
                     <template v-if="item.type === 'Disabled'">
@@ -38,8 +50,25 @@
                     <template v-if="item.type === 'Radio'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
                         <el-radio-group v-else v-model="formData[item.prop]">
-                            <el-radio v-for="radio in item.options" :label="radio.value" :key="radio.value">{{ radio.label }}</el-radio>
+                            <template v-if="item.options">
+                                <el-radio v-for="radio in item.options" :label="radio.value || radio[item.props.value]" :key="radio.value || radio[item.props.value]">{{ radio.label || radio[item.props.label] }}</el-radio>
+                            </template>
+                            <template v-else>
+                                {{ item.handlerApi && item.handlerApi(item) }}
+                            </template>
                         </el-radio-group>
+                    </template>
+                    <!-- 多选 -->
+                    <template v-if="item.type === 'Checkbox'">
+                        <div v-if="formMode === 'views'">{{ formData[item.prop] }}</div>
+                        <el-checkbox-group v-else v-model="formData[item.prop]">
+                            <template v-if="item.options">
+                                <el-checkbox v-for="checkbox in item.options" :key="checkbox.id" :label="item.props ? checkbox[item.props.value] : checkbox.value" >{{ item.props ? checkbox[item.props.label] : checkbox.label }}</el-checkbox>
+                            </template>
+                            <template v-else>
+                                {{ item.handlerApi && item.handlerApi(item) }}
+                            </template>
+                        </el-checkbox-group>
                     </template>
                     <!-- 日期 -->
                     <template v-if="item.type === 'Date'">
@@ -85,11 +114,13 @@
 import Wangeditor from "../Wangeditor";
 import Upload from "../Upload";
 import InlineFormItem from "./inlineFormItem";
+import Site from "../select/site";
+import Pool from "../select/pool";
 // utils/format
 import { dateTime } from "@/utils/format";
 export default {
     name: "Form",
-    components: { Wangeditor, Upload, InlineFormItem },
+    components: { Wangeditor, Upload, InlineFormItem, Site, Pool },
     props: {
         labelWidth: {
             type: String,

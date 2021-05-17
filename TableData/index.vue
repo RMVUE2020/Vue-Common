@@ -10,7 +10,7 @@
             @callbackComponent="callbackComponent" 
         />
         <slot name="other"></slot>
-        <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border style="width: 100%" :class="table_config.className">
+        <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border :row-key="table_config.row_key" :tree-props="{children: 'children'}" style="width: 100%">
             <el-table-column v-if="table_config.checkbox" type="selection" width="35"></el-table-column>
             <template v-for="item in this.table_config.thead">
                 <template v-if="!item.lang || item.lang === lang">
@@ -36,7 +36,10 @@
                     <el-table-column v-else-if="item.type === 'operation'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
                         <template slot-scope="scope">
                             <slot :name="item.slotName" :data="scope.row"></slot>
-                            <el-button v-if="item.deleteButton" size="small" @click="handlerDel(scope.row, item)">删除</el-button>
+                            <template v-if="item.deleteButton">
+                                <el-button v-if="item.deleteMethod === 'get'" size="small" @click="handlerDelete(scope.row, item)">删除</el-button>
+                                <el-button v-else size="small" @click="handlerDel(scope.row, item)">删除</el-button>
+                            </template>
                         </template>
                     </el-table-column>
                     <!--纯文本渲染-->
@@ -66,7 +69,8 @@
 <script>
 // 组件
 import SearchForm from "../FormSearch";
-import { GetTableData, Delete, Export } from "@/api/common";
+import { GetTableData, Delete, DeleteApi, Export } from "@/api/common";
+import { treeData } from "@/utils/format";
 export default {
     name: "TableComponent",
     components: { SearchForm },
@@ -84,8 +88,10 @@ export default {
                 className: "",
                 thead: [],
                 checkbox: true,
+                row_key: "id",
                 url: "",
                 pagination: true,
+                tree: "",
                 data: {},
                 data_backup: {},
                 // 加载完成后回调
@@ -172,8 +178,15 @@ export default {
                 }else {
                     data = responseData || [];
                 }
-                // 判断数据是否存在
-                this.table_data = data;
+                // 判断是否处理树状
+                if(this.table_config.tree) {
+                    const aaa = treeData({data, id: this.table_config.tree.id, parent: this.table_config.tree.parent, child: this.table_config.tree.child});
+                    console.log(aaa)
+                    this.table_data = aaa;
+                }else{
+                    // 判断数据是否存在
+                    this.table_data = data;
+                }
                 // 页码统计
                 this.total = responseData.count;
                 // 加载提示
@@ -238,7 +251,32 @@ export default {
                 this.loadData();
             }).catch(error => {
             })
-        }
+        },
+        handlerDelete(data, item){
+            this.$confirm('确认删除此信息?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.deleteFn(data, item);
+            }).catch(error => {
+                this.rowId = "";
+            })
+        },
+        deleteFn(data, item){
+            let requestData = {
+                url: `${this.table_config.url}`,
+                data: data[item.deleteInfo.key],
+            }
+            DeleteApi(requestData).then(response => {
+                this.$message({
+                    type: "success",
+                    message: response.message
+                })
+                this.loadData();
+            }).catch(error => {
+            })
+        },
     },
     props: {
         config: {
