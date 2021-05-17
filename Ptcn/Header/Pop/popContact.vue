@@ -23,7 +23,7 @@ export default {
     },
     data() {
         return {
-            img: process.env.VUE_APP_DOWNLOAD_IMG
+            img: this.$store.state.app.downlaod
         };
     },
     watch: {},
