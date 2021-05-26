@@ -13,37 +13,39 @@
         <el-table ref="table" v-loading="loading_table" element-loading-text="加载中" :data="table_data" border :row-key="table_config.row_key" :tree-props="{children: 'children'}" style="width: 100%">
             <el-table-column v-if="table_config.checkbox" type="selection" width="35"></el-table-column>
             <template v-for="item in this.table_config.thead">
-                <template v-if="!item.lang || item.lang === lang">
-                    <!--回调-->
-                    <el-table-column v-if="item.type === 'function'" :key="item.prop" :prop="item.prop" :label="item.label">
-                        <template slot-scope="scope">
-                            <span v-html="item.callback && item.callback(scope.row, item.prop)"></span>
-                        </template>
-                    </el-table-column>
-                    <!--插槽slot-->
-                    <el-table-column v-else-if="item.type === 'slot'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
-                        <template slot-scope="scope">
-                            <slot :name="item.slotName" :data="scope.row"></slot>
-                        </template>
-                    </el-table-column>
-                    <!--图标显示 -->
-                    <el-table-column v-else-if="item.type === 'image'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
-                        <template slot-scope="scope">
-                            <img :src="scope.row.imgUrl" :width="item.imgWidth || 50" alt="" />
-                        </template>
-                    </el-table-column>
-                    <!--操作 -->
-                    <el-table-column v-else-if="item.type === 'operation'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
-                        <template slot-scope="scope">
-                            <slot :name="item.slotName" :data="scope.row"></slot>
-                            <template v-if="item.deleteButton">
-                                <el-button v-if="item.deleteMethod === 'get'" size="small" @click="handlerDelete(scope.row, item)">删除</el-button>
-                                <el-button v-else size="small" @click="handlerDel(scope.row, item)">删除</el-button>
+                <template v-if="!hidden_col[item.prop]">
+                    <template v-if="!item.lang || item.lang === lang">
+                        <!--回调-->
+                        <el-table-column v-if="item.type === 'function'" :key="item.prop" :prop="item.prop" :label="item.label">
+                            <template slot-scope="scope">
+                                <span v-html="item.callback && item.callback(scope.row, item.prop)"></span>
                             </template>
-                        </template>
-                    </el-table-column>
-                    <!--纯文本渲染-->
-                    <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label"></el-table-column>
+                        </el-table-column>
+                        <!--插槽slot-->
+                        <el-table-column v-else-if="item.type === 'slot'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
+                            <template slot-scope="scope">
+                                <slot :name="item.slotName" :data="scope.row"></slot>
+                            </template>
+                        </el-table-column>
+                        <!--图标显示 -->
+                        <el-table-column v-else-if="item.type === 'image'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
+                            <template slot-scope="scope">
+                                <img :src="scope.row.imgUrl" :width="item.imgWidth || 50" alt="" />
+                            </template>
+                        </el-table-column>
+                        <!--操作 -->
+                        <el-table-column v-else-if="item.type === 'operation'" :key="item.prop" :prop="item.prop" :label="item.label" :width="item.width">
+                            <template slot-scope="scope">
+                                <slot :name="item.slotName" :data="scope.row"></slot>
+                                <template v-if="item.deleteButton">
+                                    <el-button v-if="item.deleteMethod === 'get'" size="small" @click="handlerDelete(scope.row, item)">删除</el-button>
+                                    <el-button v-else size="small" @click="handlerDel(scope.row, item)">删除</el-button>
+                                </template>
+                            </template>
+                        </el-table-column>
+                        <!--纯文本渲染-->
+                        <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label"></el-table-column>
+                    </template>
                 </template>
             </template>
         </el-table>
@@ -108,6 +110,8 @@ export default {
             total: 0,
             // 当前页码
             currentPage: 1,
+            // 隐藏列
+            hidden_col: {},
             // 数据ID
             rowId: "",
             //
@@ -116,10 +120,7 @@ export default {
     beforeMount(){},
     methods: {
         // 组件回调
-        callbackComponent(params){
-            this[params.function] && this[params.function](params.data);
-
-        },
+        callbackComponent(params){ this[params.function] && this[params.function](params.data); },
         // 搜索
         search(data){
             // 获取 table 列表请求的参数
@@ -277,11 +278,30 @@ export default {
             }).catch(error => {
             })
         },
+        /** 表格列表隐藏显示切换 */
+        tableColHiddenSwitch(data){
+            // 不存在时全部显示
+            if(!data) {
+                for(let key in this.hidden_col) {
+                    this.hidden_col[key] = false;
+                }
+                return false;                
+            }
+
+            // 指定的col隐藏
+            data.forEach(item => {
+                this.hidden_col[item] = true;
+            })
+        }
     },
     props: {
         config: {
             type: Object,
             default: () => {}
+        },
+        hiddenCol: {
+            type: Object,
+            default: () => ({})
         },
         searchFormConfig: {
             type: Object,
@@ -291,6 +311,7 @@ export default {
     watch: {
         config: {
             handler(newValue) {
+                this.hidden_col = this.hiddenCol;
                 this.initConfig();
             },
             immediate: true

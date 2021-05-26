@@ -8,7 +8,7 @@
                 <el-input v-if="item.type === 'Input'" v-model.trim="form_data[item.prop]" :placeholder="item.placeholder" :style="{width: item.width || 'auto'}"></el-input>
                 <!-- Select-->
                 <template v-if="item.type === 'Select'">
-                    <el-select v-if="item.options" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder">
+                    <el-select v-if="item.options" filterable v-model="form_data[item.prop]" :placeholder="item.placeholder" @change="handlerSelect(item.prop)">
                         <el-option v-for="selectItem in item.options" :key="selectItem[item.select_value] || selectItem.value" :value="selectItem[item.select_value] || selectItem.value" :label="selectItem[item.select_label] || selectItem.label"></el-option>
                     </el-select>
                     <template v-else>{{ item.handlerApi && item.handlerApi(item) }}</template>
@@ -173,6 +173,15 @@ export default {
             // 更新数据
             return optionsLang;
             data.options = optionsLang;
+        },
+        /** 下拉选项 */
+        handlerSelect(type){
+            const value = this.form_data[type];
+            const options = this.$store.state.config[type][value].hidden_col;
+            this.$emit("callbackComponent", {
+                function: "tableColHiddenSwitch",
+                data: options
+            })
         },
         /**
          * 对象数据处理
