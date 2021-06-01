@@ -140,6 +140,10 @@ export default {
                 url: this.table_config.url,
                 data: Object.assign(data, this.table_config.data),
             }
+            // 删除分页参数
+            delete requestData.data.page;
+            delete requestData.data.pageSize;
+            // 请求接口
             Export(requestData).then(response => {
                 const file = response.data;
                 file && this.gFileDown(file);
