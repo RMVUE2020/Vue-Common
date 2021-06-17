@@ -73,7 +73,7 @@
                     <!-- 日期 -->
                     <template v-if="item.type === 'Date'">
                         <div v-if="formMode === 'views'">{{ formData[item.prop + '_start'] | fotmatDate(item.viewsValue) }} - {{ formData[item.prop + '_end'] | fotmatDate(item.viewsValue) }}</div>
-                        <el-date-picker v-else v-model="formData[item.prop]" :disabled="item.disabled" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" @change="handlerData($event, item)" :style="{width: item.width}" ></el-date-picker>
+                        <el-date-picker v-else v-model="formData[item.prop]" :picker-options="item.pickerOptions || false" :disabled="item.disabled" :format="item.formatType" :value-format="item.valueType || 'yyyy-MM-dd'" :type="item.dateMode" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" @change="handlerData($event, item)" :style="{width: item.width}" ></el-date-picker>
                     </template>
                     <!-- 编辑器 -->
                     <template v-if="item.type === 'Wangeditor'">
